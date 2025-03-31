@@ -1,4 +1,4 @@
-quickdraw_dataset/
+dataset/quickdraw_dataset/
 __pycache__/
 .DS_Store
 *.pyc
