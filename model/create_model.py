@@ -1,71 +1,71 @@
-import tensorflow as tf
-from tensorflow.keras.applications import ResNet50
-from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam
-import numpy as np
 import os
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
+from tensorflow.keras.optimizers import Adam
 
-# Paths
-DATASET_PATH = "../dataset/quickdraw_dataset"  # Adjusted path
-MODEL_PATH = "./quickdraw_resnet_model.h5"
-HISTORY_PATH = "./training_history.npy"
+# Define constants
+IMG_SIZE = 96  # Input image size
+NUM_CLASSES = 10  # Number of categories
 
-# Load Data
-X_train = np.load(f"{DATASET_PATH}/X_train.npy")
-X_test = np.load(f"{DATASET_PATH}/X_test.npy")
-y_train = np.load(f"{DATASET_PATH}/y_train.npy")
-y_test = np.load(f"{DATASET_PATH}/y_test.npy")
+# Get the absolute path of the dataset directory
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))  # Go up one level to Sketcher/
+DATASET_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")  # Absolute path to dataset
+MODEL_DIR = os.path.dirname(__file__)  # Save model in the same folder as this script
 
-# Normalize Data
+# Load the dataset
+X_train = np.load(os.path.join(DATASET_DIR, "X_train.npy"))
+X_test = np.load(os.path.join(DATASET_DIR, "X_test.npy"))
+y_train = np.load(os.path.join(DATASET_DIR, "y_train.npy"))
+y_test = np.load(os.path.join(DATASET_DIR, "y_test.npy"))
+
+# Normalize the images
 X_train = X_train / 255.0
 X_test = X_test / 255.0
 
-# Convert grayscale to 3-channel (required by ResNet)
-X_train_rgb = np.repeat(X_train, 3, axis=-1)
-X_test_rgb = np.repeat(X_test, 3, axis=-1)
+# Reshape images to add a channel dimension (since we're using Conv2D)
+X_train = X_train.reshape(-1, IMG_SIZE, IMG_SIZE, 1)  # Shape (N, 96, 96, 1)
+X_test = X_test.reshape(-1, IMG_SIZE, IMG_SIZE, 1)  # Shape (N, 96, 96, 1)
 
-# Load ResNet-18 (using ResNet50 and reducing depth)
-base_model = ResNet50(
-    input_shape=(96, 96, 3),  # ResNet expects 3 channels
-    include_top=False,  # Remove fully connected layer
-    weights="imagenet"
-)
-
-# Freeze Base Model Layers
-base_model.trainable = False
-
-# Build Model
+# Build the custom CNN model
 model = Sequential([
-    base_model,
+    Conv2D(32, (3, 3), activation='relu', input_shape=(IMG_SIZE, IMG_SIZE, 1)),
+    BatchNormalization(),
+    MaxPooling2D((2, 2)),
+
+    Conv2D(64, (3, 3), activation='relu'),
+    BatchNormalization(),
+    MaxPooling2D((2, 2)),
+
+    Conv2D(128, (3, 3), activation='relu'),
+    BatchNormalization(),
+    MaxPooling2D((2, 2)),
+
     Flatten(),
-    Dense(512, activation="relu"),
+    Dense(256, activation='relu'),
     Dropout(0.5),
-    Dense(10, activation="softmax")  # 10 classes
+    Dense(NUM_CLASSES, activation='softmax')
 ])
 
-# Compile Model
-model.compile(
-    optimizer=Adam(learning_rate=0.0001),
-    loss="sparse_categorical_crossentropy",
-    metrics=["accuracy"]
-)
+# Compile the model
+model.compile(optimizer=Adam(learning_rate=0.0001),
+              loss="sparse_categorical_crossentropy",
+              metrics=["accuracy"])
 
-# Train Model
-history = model.fit(
-    X_train_rgb, y_train,
-    epochs=10,
-    validation_data=(X_test_rgb, y_test),
-    batch_size=32
-)
+# Train the model
+history = model.fit(X_train, y_train, epochs=20, validation_data=(X_test, y_test), batch_size=32)
 
-# Evaluate Model
-test_loss, test_accuracy = model.evaluate(X_test_rgb, y_test)
+# Evaluate the model
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
 
-# Save Model & Training History
-model.save(MODEL_PATH)
-np.save(HISTORY_PATH, history.history)
+# Save the trained model
+model_save_path = os.path.join(MODEL_DIR, "quickdraw_cnn.h5")
+model.save(model_save_path)
+print(f"Model trained and saved at {model_save_path}")
 
-print(f"Model saved at {MODEL_PATH}")
-print(f"Training history saved at {HISTORY_PATH}")
+# Save training history
+history_save_path = os.path.join(MODEL_DIR, "training_history.npy")
+np.save(history_save_path, history.history)
+print(f"Training history saved at {history_save_path}")
