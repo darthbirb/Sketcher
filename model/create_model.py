@@ -4,68 +4,71 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import ReduceLROnPlateau
 
 # Define constants
 IMG_SIZE = 96  # Input image size
 NUM_CLASSES = 10  # Number of categories
 
-# Get the absolute path of the dataset directory
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))  # Go up one level to Sketcher/
-DATASET_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")  # Absolute path to dataset
-MODEL_DIR = os.path.dirname(__file__)  # Save model in the same folder as this script
+# Get dataset paths
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+DATASET_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")
+MODEL_DIR = os.path.dirname(__file__)
 
-# Load the dataset
+# Load dataset
 X_train = np.load(os.path.join(DATASET_DIR, "X_train.npy"))
 X_test = np.load(os.path.join(DATASET_DIR, "X_test.npy"))
 y_train = np.load(os.path.join(DATASET_DIR, "y_train.npy"))
 y_test = np.load(os.path.join(DATASET_DIR, "y_test.npy"))
 
-# Normalize the images
+# Normalize images
 X_train = X_train / 255.0
 X_test = X_test / 255.0
 
-# Reshape images to add a channel dimension (since we're using Conv2D)
-X_train = X_train.reshape(-1, IMG_SIZE, IMG_SIZE, 1)  # Shape (N, 96, 96, 1)
-X_test = X_test.reshape(-1, IMG_SIZE, IMG_SIZE, 1)  # Shape (N, 96, 96, 1)
+# Reshape images
+X_train = X_train.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
+X_test = X_test.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
-# Build the custom CNN model
+# Define CNN model with improvements
 model = Sequential([
     Conv2D(32, (3, 3), activation='relu', input_shape=(IMG_SIZE, IMG_SIZE, 1)),
     BatchNormalization(),
     MaxPooling2D((2, 2)),
+    Dropout(0.25),  # Added dropout
 
     Conv2D(64, (3, 3), activation='relu'),
     BatchNormalization(),
     MaxPooling2D((2, 2)),
+    Dropout(0.25),  # Added dropout
 
-    Conv2D(128, (3, 3), activation='relu'),
+    Conv2D(64, (3, 3), activation='relu'),  # Reduced complexity
     BatchNormalization(),
     MaxPooling2D((2, 2)),
 
     Flatten(),
-    Dense(256, activation='relu'),
-    Dropout(0.5),
+    Dense(128, activation='relu'),
+    Dropout(0.5),  # Strong dropout to reduce overfitting
     Dense(NUM_CLASSES, activation='softmax')
 ])
 
-# Compile the model
-model.compile(optimizer=Adam(learning_rate=0.0001),
+# Reduce learning rate if validation loss stops improving
+lr_scheduler = ReduceLROnPlateau(monitor="val_loss", patience=3, factor=0.5, verbose=1)
+
+# Compile model
+model.compile(optimizer=Adam(learning_rate=5e-5),  # Lower learning rate
               loss="sparse_categorical_crossentropy",
               metrics=["accuracy"])
 
-# Train the model
-history = model.fit(X_train, y_train, epochs=20, validation_data=(X_test, y_test), batch_size=32)
+# Train the model with scheduler
+history = model.fit(X_train, y_train, epochs=20, validation_data=(X_test, y_test),
+                    batch_size=32, callbacks=[lr_scheduler])
 
-# Evaluate the model
+# Evaluate model
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
 
-# Save the trained model
-model_save_path = os.path.join(MODEL_DIR, "quickdraw_cnn.h5")
-model.save(model_save_path)
-print(f"Model trained and saved at {model_save_path}")
+# Save model
+model.save(os.path.join(MODEL_DIR, "quickdraw_cnn.h5"))
+np.save(os.path.join(MODEL_DIR, "training_history.npy"), history.history)
 
-# Save training history
-history_save_path = os.path.join(MODEL_DIR, "training_history.npy")
-np.save(history_save_path, history.history)
-print(f"Training history saved at {history_save_path}")
+print(f"Model saved at {MODEL_DIR}")
