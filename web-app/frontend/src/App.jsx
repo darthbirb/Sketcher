@@ -3,8 +3,21 @@ import SketchCanvas from "./components/SketchCanvas";
 
 function App() {
   return (
-    <div className="App">
-      <SketchCanvas />
+    <div className="app-container">
+      {/* Sidebar (for future tabs/buttons) */}
+      <div className="sidebar">
+        <h2>Menu</h2>
+        <ul>
+          <li>Tab 1</li>
+          <li>Tab 2</li>
+          <li>Tab 3</li>
+        </ul>
+      </div>
+
+      {/* Main content area */}
+      <div className="main-content">
+        <SketchCanvas />
+      </div>
     </div>
   );
 }

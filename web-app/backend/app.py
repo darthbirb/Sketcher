@@ -7,13 +7,19 @@ import base64
 import cv2
 import io
 from PIL import Image
+import os
 
 app = Flask(__name__)
 CORS(app)  # Allow requests from frontend
 
+# Define base directory
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+MODEL_DIR = os.path.join(BASE_DIR, "model")
+DATASET_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")
+
 # Load the trained model
-model = load_model('../model/quickdraw_cnn.h5')
-class_names = np.load('../dataset/quickdraw_dataset/class_names.npy')
+model = load_model(os.path.join(MODEL_DIR, "quickdraw_cnn.h5"))
+class_names = np.load(os.path.join(DATASET_DIR, "class_names.npy"))
 
 def preprocess_image(image_data):
     image = Image.open(io.BytesIO(base64.b64decode(image_data))).convert('L')
