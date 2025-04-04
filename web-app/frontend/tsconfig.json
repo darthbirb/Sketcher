@@ -6,5 +6,10 @@
   ],
   "compilerOptions": {
     "allowJs": true,
+    /* Shadcn edits */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }
