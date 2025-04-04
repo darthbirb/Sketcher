@@ -1,5 +1,6 @@
-import React from "react";
-import SketchCanvas from "./components/SketchCanvas";
+import React from 'react';
+// @ts-ignore
+import SketchCanvas from './components/SketchCanvas';
 
 function App() {
   return (
