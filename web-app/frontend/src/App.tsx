@@ -25,7 +25,7 @@ function App() {
       body: JSON.stringify({ image: base64.split(",")[1] }), // remove "data:image/..."
     });
     const result = await response.json();
-    setPredictions(result.predictions);
+    setPredictions([...result.predictions]);
   };
 
   return (
@@ -33,7 +33,7 @@ function App() {
       {/* Header */}
       <header className="p-6">
         <h1 className="text-4xl font-bold text-white inline">Sketcher</h1>
-        <span className="text-orange-400 text-md ml-3">(not the shoes)</span>
+        <span className="text-orange-400 text-md ml-3">(not the shoes!)</span>
       </header>
 
       {/* Main layout */}
