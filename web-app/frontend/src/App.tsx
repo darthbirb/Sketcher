@@ -11,9 +11,12 @@ type SketchCanvasHandle = {
 function App() {
   const canvasRef = useRef<SketchCanvasHandle | null>(null);
   const [predictions, setPredictions] = useState<[string, number][]>([]);
+  const [hasDrawn, setHasDrawn] = useState(false);
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
+    setPredictions([]);
+    setHasDrawn(false);
   };
 
   const handleSubmit = async () => {
@@ -22,55 +25,75 @@ function App() {
     const response = await fetch("/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image: base64.split(",")[1] }), // remove "data:image/..."
+      body: JSON.stringify({ image: base64.split(",")[1] }),
     });
     const result = await response.json();
     setPredictions([...result.predictions]);
   };
 
   return (
-    <div className="min-h-screen bg-[#212121] text-white font-sans">
+    <div className="min-h-screen bg-[#09090b] text-white font-sans flex flex-col items-center px-4 py-8">
       {/* Header */}
-      <header className="p-6">
-        <h1 className="text-4xl font-bold text-white inline">Sketcher</h1>
-        <span className="text-orange-400 text-md ml-3">(not the shoes!)</span>
-      </header>
+      <h1 className="text-5xl font-bold text-center mb-2">Sketcher</h1>
+      <p className="text-center text-lg text-gray-400 mb-8">
+        Not the shoe! – Draw something and let the model predict it
+      </p>
 
-      {/* Main layout */}
-      <main className="flex justify-center items-start p-8 gap-10">
-        {/* Canvas and Buttons */}
-        <div className="flex flex-col items-center">
+      {/* Canvas container */}
+      <div className="relative">
+        {!hasDrawn && (
+          <div className="absolute z-10 w-full h-full flex items-center justify-center pointer-events-none">
+            <p className="text-gray-400 text-lg">Draw something here</p>
+          </div>
+        )}
+        <div
+          onPointerDown={() => setHasDrawn(true)}
+          className="bg-white rounded-xl p-2 shadow-md"
+        >
           <SketchCanvas ref={canvasRef} />
+        </div>
+      </div>
 
-          <div className="flex gap-4 mt-4">
-            <Button variant="outline" onClick={handleClear}>
-              Clear
-            </Button>
-            <Button onClick={handleSubmit}>Submit</Button>
+      {/* Clear button (only visible after drawing) */}
+      {hasDrawn && (
+        <div className="flex gap-4 mt-4">
+          <Button variant="destructive" onClick={handleClear}>
+            Clear
+          </Button>
+        </div>
+      )}
+
+      {/* Prediction Table */}
+      {predictions.length > 0 && (
+        <div className="mt-8 w-[400px]">
+          <div className="grid grid-cols-3 gap-2 text-center text-sm text-gray-400">
+            {predictions.map(([label], index) => (
+              <div key={index}>{label}</div>
+            ))}
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center text-lg font-medium mt-1">
+            {predictions.map(([_, confidence], index) => (
+              <div key={index}>{(confidence * 100).toFixed(1)}%</div>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Prediction Table */}
-        <div className="bg-[#2c2c2c] rounded-xl p-6 shadow-lg w-64">
-          <h2 className="text-xl font-semibold mb-4">Predictions</h2>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-gray-400">
-                <th>Label</th>
-                <th className="text-right">Confidence</th>
-              </tr>
-            </thead>
-            <tbody>
-              {predictions.map(([label, value], index) => (
-                <tr key={index}>
-                  <td className="py-1">{label}</td>
-                  <td className="py-1 text-right">{(value * 100).toFixed(1)}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
+      {/* Predict Button */}
+      <div className="mt-6">
+        <Button onClick={handleSubmit}>Predict</Button>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-12 text-center text-sm text-gray-500 opacity-50">
+        <p className="mb-1">
+          Want to build an app like this? Fork it on{" "}
+          <a href="https://github.com" className="underline text-white">
+            GitHub
+          </a>
+        </p>
+        <p>Powered by TensorFlow and React</p>
+      </div>
     </div>
   );
 }
