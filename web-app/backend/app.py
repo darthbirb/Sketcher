@@ -21,7 +21,7 @@ DATASET_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")
 model = load_model(os.path.join(MODEL_DIR, "quickdraw_cnn.h5"))
 class_names = np.load(os.path.join(DATASET_DIR, "class_names.npy"))
 
-def crop_and_center(image, target_size=(96, 96)):
+def crop_and_center(image, target_size=(28, 28)):
     # Convert to numpy and get non-zero (stroke) pixel coordinates
     np_img = np.array(image)
     non_zero = np.argwhere(np_img < 255)  # stroke pixels (assuming white background)
@@ -52,11 +52,11 @@ def preprocess_image(image_data):
     image = ImageOps.invert(image)
 
     # Crop and center the drawing
-    image = crop_and_center(image, target_size=(96, 96))
+    image = crop_and_center(image, target_size=(28, 28))
 
     # Normalize and reshape
     image = np.array(image) / 255.0
-    image = image.reshape(1, 96, 96, 1)
+    image = image.reshape(1, 28, 28, 1)
     return image
 
 

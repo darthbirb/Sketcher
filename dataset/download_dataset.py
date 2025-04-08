@@ -1,37 +1,36 @@
 import os
-import requests
+import urllib.request
 
-# List of 10 categories
-categories = [
-    "cat", "dog", "car", "bicycle", "airplane",
-    "tree", "house", "fish", "apple", "mug"
-]
+# Raw .npy files save directory
+SAVE_DIR = "quickdraw_dataset/raw_categories"
+os.makedirs(SAVE_DIR, exist_ok=True)
 
-# Dataset storage folder
-DATA_DIR = "quickdraw_dataset"
-os.makedirs(DATA_DIR, exist_ok=True)
+# URL containing all class names
+CATEGORIES_URL = "https://raw.githubusercontent.com/googlecreativelab/quickdraw-dataset/master/categories.txt"
 
-# Download function
-def download_file(category):
-    url = f"https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap/{category}.npy"
-    file_path = os.path.join(DATA_DIR, f"{category}.npy")
+def download_categories():
+    print("Downloading category list...")
+    response = urllib.request.urlopen(CATEGORIES_URL)
+    raw_text = response.read().decode('utf-8')
+    categories = raw_text.strip().split("\n")
+    return categories
 
-    if os.path.exists(file_path):
-        print(f"{category}.npy already exists. Skipping...")
-        return
+def download_npy_files(categories):
+    for category in categories:
+        formatted = category.replace(" ", "%20")  # spaces in URLs are encoded
+        file_url = f"https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap/{formatted}.npy"
+        save_path = os.path.join(SAVE_DIR, f"{category}.npy")
+        
+        if os.path.exists(save_path):
+            print(f"Already exists: {category}")
+            continue
+        
+        try:
+            print(f"Downloading {category}...")
+            urllib.request.urlretrieve(file_url, save_path)
+        except Exception as e:
+            print(f"Failed to download {category}: {e}")
 
-    print(f"Downloading {category}.npy...")
-    response = requests.get(url, stream=True)
-
-    if response.status_code == 200:
-        with open(file_path, "wb") as file:
-            file.write(response.content)
-        print(f"Downloaded {category}.npy ✅")
-    else:
-        print(f"Failed to download {category}.npy ❌")
-
-# Download each category
-for category in categories:
-    download_file(category)
-
-print("All downloads completed! 🚀")
+if __name__ == "__main__":
+    categories = download_categories()
+    download_npy_files(categories)
