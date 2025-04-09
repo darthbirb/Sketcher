@@ -32,14 +32,12 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-white font-sans flex flex-col items-center px-4 py-8">
-      {/* Header */}
+    <div className="min-h-screen bg-[#212121] text-white font-sans flex flex-col items-center px-4 py-8">
       <h1 className="text-5xl font-bold text-center mb-2">Sketcher</h1>
       <p className="text-center text-lg text-gray-400 mb-8">
         Not the shoe! – Draw something and let the model predict it
       </p>
 
-      {/* Canvas container */}
       <div className="relative">
         {!hasDrawn && (
           <div className="absolute z-10 w-full h-full flex items-center justify-center pointer-events-none">
@@ -48,22 +46,36 @@ function App() {
         )}
         <div
           onPointerDown={() => setHasDrawn(true)}
-          className="bg-white rounded-xl p-2 shadow-md"
+          className="bg-white rounded-xl"
+          style={{ boxShadow: 'none', border: 'none' }}
         >
           <SketchCanvas ref={canvasRef} />
         </div>
       </div>
 
-      {/* Clear button (only visible after drawing) */}
-      {hasDrawn && (
-        <div className="flex gap-4 mt-4">
-          <Button variant="destructive" onClick={handleClear}>
-            Clear
-          </Button>
-        </div>
-      )}
+      {/* Buttons with fade-in effect */}
+      <div
+        className={`flex gap-4 mt-4 transition-opacity duration-500 ${
+          hasDrawn ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <Button
+          variant={hasDrawn ? "destructive" : "default"} // Change variant based on hasDrawn
+          onClick={handleClear}
+          disabled={!hasDrawn} // Disable if not drawn
+          className="w-32" // Set width for both buttons
+        >
+          Clear
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={!hasDrawn} // Disable if not drawn
+          className="w-32" // Set width for both buttons
+        >
+          Predict
+        </Button>
+      </div>
 
-      {/* Prediction Table */}
       {predictions.length > 0 && (
         <div className="mt-8 w-[400px]">
           <div className="grid grid-cols-3 gap-2 text-center text-sm text-gray-400">
@@ -79,12 +91,6 @@ function App() {
         </div>
       )}
 
-      {/* Predict Button */}
-      <div className="mt-6">
-        <Button onClick={handleSubmit}>Predict</Button>
-      </div>
-
-      {/* Footer */}
       <div className="mt-12 text-center text-sm text-gray-500 opacity-50">
         <p className="mb-1">
           Want to build an app like this? Fork it on{" "}

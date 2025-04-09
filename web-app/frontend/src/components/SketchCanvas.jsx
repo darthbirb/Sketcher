@@ -26,7 +26,7 @@ const SketchCanvas = forwardRef((props, ref) => {
         ref={canvasRef}
         width="400px"
         height="400px"
-        strokeWidth={4}
+        strokeWidth={8}
         strokeColor="black"
         style={{ borderRadius: "1rem" }}
       />
