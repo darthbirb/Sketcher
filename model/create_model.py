@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, GlobalAveragePooling2D, BatchNormalization, Dense, Dropout, InputLayer
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import ReduceLROnPlateau
+from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
 from tensorflow.keras.utils import to_categorical
 import os
 
@@ -28,24 +28,29 @@ y_test_cat = to_categorical(y_test, NUM_CLASSES)
 model = Sequential([
     InputLayer(input_shape=(28, 28, 1)),
 
-    Conv2D(64, (3, 3), activation='relu', padding='same'),
+    Conv2D(32, (3, 3), activation='relu', padding='same'),
     BatchNormalization(),
     MaxPooling2D((2, 2)),
     Dropout(0.2),
 
-    Conv2D(128, (3, 3), activation='relu', padding='same'),
+    Conv2D(64, (3, 3), activation='relu', padding='same'),
     BatchNormalization(),
     MaxPooling2D((2, 2)),
     Dropout(0.3),
 
-    Conv2D(256, (3, 3), activation='relu', padding='same'),
+    Conv2D(128, (3, 3), activation='relu', padding='same'),
     BatchNormalization(),
     MaxPooling2D((2, 2)),
     Dropout(0.4),
 
+    Conv2D(256, (3, 3), activation='relu', padding='same'),
+    BatchNormalization(),
+    MaxPooling2D((2, 2)),
+    Dropout(0.5),
+
     GlobalAveragePooling2D(),
 
-    Dense(128, activation='relu'),
+    Dense(256, activation='relu'),
     Dropout(0.5),
     Dense(NUM_CLASSES, activation='softmax')
 ])
@@ -53,20 +58,31 @@ model = Sequential([
 # Compile and train model
 lr_scheduler = ReduceLROnPlateau(monitor='val_loss', patience=3, factor=0.5, verbose=1)
 
+# Early stopping to prevent overfitting
+early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=1, restore_best_weights=True)
+
+# Model checkpoint to save the best model
+model_checkpoint = ModelCheckpoint(
+    MODEL_PATH,  # Path to save the model
+    monitor='val_loss',  # Monitor validation loss
+    save_best_only=True,  # Save only the best model
+    mode='min',  # Save the model with the minimum validation loss
+    verbose=1
+)
+
 model.compile(optimizer=Adam(learning_rate=1e-4),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
 history = model.fit(
     X_train, y_train_cat,
-    epochs=20,
+    epochs=40,
     batch_size=64,
     validation_data=(X_test, y_test_cat),
-    callbacks=[lr_scheduler]
+    callbacks=[lr_scheduler, early_stopping, model_checkpoint] 
 )
 
-# Save model and class names
-model.save(MODEL_PATH)
+# Save class names
 np.save(CLASS_NAMES_PATH, class_names)
 
 print(f"\n Model trained and saved to '{MODEL_PATH}' with {NUM_CLASSES} classes.")

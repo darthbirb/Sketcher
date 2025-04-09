@@ -62,7 +62,7 @@ def preprocess_image(image_data):
     image = ImageOps.invert(image)
 
     # DEBUGGING: Save modified image
-    image.save("image.png")
+    #image.save("image.png")
 
     # Normalize and reshape
     image = np.array(image) / 255.0
