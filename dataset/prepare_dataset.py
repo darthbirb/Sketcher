@@ -1,50 +1,47 @@
-import numpy as np
-import tensorflow as tf
 import os
-import glob
+import numpy as np
 from sklearn.model_selection import train_test_split
 
-# Constants
-DATASET_DIR = "dataset/quickdraw_dataset"
-IMG_SIZE = 96  # MobileNetV3 expects 96x96 input
-NUM_SAMPLES_PER_CLASS = 10000  # Adjust as needed
+RAW_DATA_DIR = "quickdraw_dataset/raw_categories"
+PROCESSED_DATA_DIR = "quickdraw_dataset"
+NUM_SAMPLES_PER_CLASS = 2000
 
-# Load dataset
-def load_data():
-    X, y, class_names = [], [], []
+os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
-    for idx, file in enumerate(glob.glob(os.path.join(DATASET_DIR, "raw_categories", "*.npy"))):
-        class_name = os.path.basename(file).replace(".npy", "")
+X = []
+y = []
+class_names = []
+
+category_files = sorted(os.listdir(RAW_DATA_DIR))
+
+print("Preparing dataset...")
+
+for idx, file_name in enumerate(category_files):
+    class_name = file_name.replace(".npy", "")
+    file_path = os.path.join(RAW_DATA_DIR, file_name)
+    
+    try:
+        data = np.load(file_path)
+        data = data[:NUM_SAMPLES_PER_CLASS] 
+        X.append(data)
+        y.append(np.full(len(data), idx))
         class_names.append(class_name)
+        print(f"Loaded {len(data)} samples for '{class_name}'")
+    except Exception as e:
+        print(f"Error loading {file_name}: {e}")
 
-        data = np.load(file)  # Load .npy file
-        data = data[:NUM_SAMPLES_PER_CLASS]  # Limit number of samples
+X = np.concatenate(X, axis=0).reshape(-1, 28, 28, 1).astype("float32") / 255.0
+y = np.concatenate(y, axis=0)
 
-        X.extend(data)
-        y.extend([idx] * len(data))
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
-    X = np.array(X) / 255.0  # Normalize pixel values (0-1)
-    X = X.reshape(-1, 28, 28, 1)  # Reshape to (28x28 grayscale)
-    y = np.array(y)  # Convert labels to numpy array
+np.save(os.path.join(PROCESSED_DATA_DIR, "X_train.npy"), X_train)
+np.save(os.path.join(PROCESSED_DATA_DIR, "y_train.npy"), y_train)
+np.save(os.path.join(PROCESSED_DATA_DIR, "X_test.npy"), X_test)
+np.save(os.path.join(PROCESSED_DATA_DIR, "y_test.npy"), y_test)
+np.save(os.path.join(PROCESSED_DATA_DIR, "class_names.npy"), np.array(class_names))
 
-    return X, y, class_names
-
-# Preprocess dataset
-X, y, CLASS_NAMES = load_data()
-
-# Save class names inside quickdraw_dataset
-np.save(os.path.join(DATASET_DIR, "class_names.npy"), CLASS_NAMES)
-
-# Resize images to 96x96 for MobileNetV3
-X_resized = tf.image.resize(X, (IMG_SIZE, IMG_SIZE)).numpy()
-
-# Split into train & test sets
-X_train, X_test, y_train, y_test = train_test_split(X_resized, y, test_size=0.2, random_state=42)
-
-# Save processed dataset inside quickdraw_dataset
-np.save(os.path.join(DATASET_DIR, 'X_train.npy'), X_train)
-np.save(os.path.join(DATASET_DIR, 'X_test.npy'), X_test)
-np.save(os.path.join(DATASET_DIR, 'y_train.npy'), y_train)
-np.save(os.path.join(DATASET_DIR, 'y_test.npy'), y_test)
-
-print(f"Dataset prepared: {len(X_train)} train samples, {len(X_test)} test samples.")
+print(f"\nSaved processed dataset:")
+print(f" - {len(X_train)} training samples")
+print(f" - {len(X_test)} testing samples")
+print(f" - {len(class_names)} classes")
