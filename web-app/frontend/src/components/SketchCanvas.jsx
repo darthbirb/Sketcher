@@ -22,14 +22,15 @@ const SketchCanvas = forwardRef((props, ref) => {
 
   return (
     <div className="bg-white rounded-xl p-2 shadow-md">
-      <ReactSketchCanvas
-        ref={canvasRef}
-        width="400px"
-        height="400px"
-        strokeWidth={14}
-        strokeColor="black"
-        style={{ borderRadius: "1rem" }}
-      />
+      <div className="w-[400px] max-w-full h-[400px] mx-auto">
+        <ReactSketchCanvas
+          ref={canvasRef}
+          className="w-full h-full"
+          strokeWidth={14}
+          strokeColor="black"
+          style={{ borderRadius: "1rem" }}
+        />
+      </div>
     </div>
   );
 });

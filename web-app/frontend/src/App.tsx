@@ -85,7 +85,7 @@ function App() {
       </div>
 
       {predictions.length > 0 && (
-        <div className="mt-8 w-[400px]">
+        <div className="mt-8 w-[400px] max-w-full">
           <div className="grid grid-cols-3 gap-2 text-center text-sm text-gray-400">
             {predictions.map(([label], index) => (
               <div key={index}>{label}</div>

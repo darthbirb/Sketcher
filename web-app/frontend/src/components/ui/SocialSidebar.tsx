@@ -10,7 +10,7 @@ const SocialSidebar = () => {
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <div className="fixed left-4 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 z-50">
+    <div className="hidden md:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col items-center gap-6 z-50">
       {links.map(({ name, src, href }) => (
         <a
           key={name}
