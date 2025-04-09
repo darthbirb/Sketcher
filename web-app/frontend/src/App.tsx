@@ -35,7 +35,7 @@ function App() {
     <div className="min-h-screen bg-[#212121] text-white font-sans flex flex-col items-center px-4 py-8">
       <h1 className="text-5xl font-bold text-center mb-2">Sketcher</h1>
       <p className="text-center text-lg text-gray-400 mb-8">
-        Not the shoe! – Draw something and let the model predict it
+        Not the shoe! – Draw something for the model to recognize
       </p>
 
       <div className="relative">
@@ -60,17 +60,17 @@ function App() {
         }`}
       >
         <Button
-          variant={hasDrawn ? "destructive" : "default"} // Change variant based on hasDrawn
+          variant={"destructive"}
           onClick={handleClear}
-          disabled={!hasDrawn} // Disable if not drawn
-          className="w-32" // Set width for both buttons
+          disabled={!hasDrawn}
+          className="w-32"
         >
           Clear
         </Button>
         <Button
           onClick={handleSubmit}
-          disabled={!hasDrawn} // Disable if not drawn
-          className="w-32" // Set width for both buttons
+          disabled={!hasDrawn}
+          className="w-32"
         >
           Predict
         </Button>

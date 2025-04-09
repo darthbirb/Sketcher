@@ -1,11 +1,9 @@
 import os
 import urllib.request
 
-# Raw .npy files save directory
 SAVE_DIR = "quickdraw_dataset/raw_categories"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
-# URL containing all class names
 CATEGORIES_URL = "https://raw.githubusercontent.com/googlecreativelab/quickdraw-dataset/master/categories.txt"
 
 def download_categories():
@@ -17,7 +15,7 @@ def download_categories():
 
 def download_npy_files(categories):
     for category in categories:
-        formatted = category.replace(" ", "%20")  # spaces in URLs are encoded
+        formatted = category.replace(" ", "%20")
         file_url = f"https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap/{formatted}.npy"
         save_path = os.path.join(SAVE_DIR, f"{category}.npy")
         

@@ -12,7 +12,6 @@ X = []
 y = []
 class_names = []
 
-# Sorting the files to ensure consistent ordering
 category_files = sorted(os.listdir(RAW_DATA_DIR))
 
 print("Preparing dataset...")
@@ -23,9 +22,9 @@ for idx, file_name in enumerate(category_files):
     
     try:
         data = np.load(file_path)
-        data = data[:NUM_SAMPLES_PER_CLASS]  # Only using the first N samples
+        data = data[:NUM_SAMPLES_PER_CLASS] 
         X.append(data)
-        y.append(np.full(len(data), idx))  # Assigning numerical labels
+        y.append(np.full(len(data), idx))
         class_names.append(class_name)
         print(f"Loaded {len(data)} samples for '{class_name}'")
     except Exception as e:
@@ -34,7 +33,6 @@ for idx, file_name in enumerate(category_files):
 X = np.concatenate(X, axis=0).reshape(-1, 28, 28, 1).astype("float32") / 255.0
 y = np.concatenate(y, axis=0)
 
-# Train/test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 np.save(os.path.join(PROCESSED_DATA_DIR, "X_train.npy"), X_train)

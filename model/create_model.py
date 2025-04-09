@@ -12,7 +12,7 @@ DATA_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "quickdraw_cnn.h5")
 CLASS_NAMES_PATH = os.path.join(DATA_DIR, "class_names.npy")
 
-# Load preprocessed data
+# Loading preprocessed data
 X_train = np.load(os.path.join(DATA_DIR, "X_train.npy"))
 y_train = np.load(os.path.join(DATA_DIR, "y_train.npy"))
 X_test = np.load(os.path.join(DATA_DIR, "X_test.npy"))
@@ -20,7 +20,7 @@ y_test = np.load(os.path.join(DATA_DIR, "y_test.npy"))
 class_names = np.load(os.path.join(DATA_DIR, "class_names.npy"))
 NUM_CLASSES = len(class_names)
 
-# Convert labels to categorical
+# Converting labels to categorical
 y_train_cat = to_categorical(y_train, NUM_CLASSES)
 y_test_cat = to_categorical(y_test, NUM_CLASSES)
 
@@ -55,18 +55,17 @@ model = Sequential([
     Dense(NUM_CLASSES, activation='softmax')
 ])
 
-# Compile and train model
+
+# Compiling and training the model
 lr_scheduler = ReduceLROnPlateau(monitor='val_loss', patience=3, factor=0.5, verbose=1)
 
-# Early stopping to prevent overfitting
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=1, restore_best_weights=True)
 
-# Model checkpoint to save the best model
 model_checkpoint = ModelCheckpoint(
-    MODEL_PATH,  # Path to save the model
-    monitor='val_loss',  # Monitor validation loss
-    save_best_only=True,  # Save only the best model
-    mode='min',  # Save the model with the minimum validation loss
+    MODEL_PATH,
+    monitor='val_loss',
+    save_best_only=True,
+    mode='min',
     verbose=1
 )
 
@@ -82,7 +81,7 @@ history = model.fit(
     callbacks=[lr_scheduler, early_stopping, model_checkpoint] 
 )
 
-# Save class names
+# Unnecessary, but just to doublecheck
 np.save(CLASS_NAMES_PATH, class_names)
 
 print(f"\n Model trained and saved to '{MODEL_PATH}' with {NUM_CLASSES} classes.")
