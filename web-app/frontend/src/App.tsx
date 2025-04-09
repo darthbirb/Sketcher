@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 // @ts-ignore
-import SocialSidebar from "./components/ui/SocialSidebar";
+import SocialSidebar from "./components/SocialSidebar";
 // @ts-ignore
 import SketchCanvas from "./components/SketchCanvas";
 
