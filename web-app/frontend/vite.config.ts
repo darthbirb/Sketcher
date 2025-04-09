@@ -16,7 +16,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/predict': 'http://127.0.0.1:5000', // proxy backend request for /predict to your Flask server
+      '/predict': 'http://127.0.0.1:5000',
     },
   },
 });
