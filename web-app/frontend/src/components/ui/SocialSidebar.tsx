@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 const links = [
-  { name: "LinkedIn", src: "/linkedin.svg", href: "https://www.linkedin.com/in/amr-m-fawzy/" },
   { name: "GitHub", src: "/github.svg", href: "https://github.com/darthbirb/Sketcher" },
+  { name: "LinkedIn", src: "/linkedin.svg", href: "https://www.linkedin.com/in/amr-m-fawzy/" },
   { name: "Quick, Draw!", src: "/quickdraw.svg", href: "https://quickdraw.withgoogle.com/" },
 ];
 

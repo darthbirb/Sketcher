@@ -43,14 +43,14 @@ function App() {
         className="h-18 mb-2 invert"
       />
 
-      <p className="text-center text-lg text-gray-400 mb-8">
-        Not the shoe! – Sketch something for the model to identify
+      <p className="text-center text-lg text-gray-400 mb-4">
+        Sketch something for the model to identify
       </p>
 
       <div className="relative">
         {!hasDrawn && (
           <div className="absolute z-10 w-full h-full flex items-center justify-center pointer-events-none">
-            <p className="text-gray-400 text-lg">Draw something here</p>
+            <p className="text-gray-400 text-lg">Draw something here!</p>
           </div>
         )}
         <div
@@ -62,7 +62,6 @@ function App() {
         </div>
       </div>
 
-      {/* Buttons with fade-in effect */}
       <div
         className={`flex gap-4 mt-4 transition-opacity duration-500 ${
           hasDrawn ? "opacity-100" : "opacity-0"
@@ -100,14 +99,29 @@ function App() {
         </div>
       )}
 
-      <div className="mt-12 text-center text-sm text-gray-500 opacity-50">
+      <div className="mt-6 text-center text-sm text-gray-400">
         <p className="mb-1">
-          Want to build an app like this? Fork it on{" "}
-          <a href="https://github.com" className="underline text-white">
+          Not to be confused with the shoes! Check out the code on{" "}
+          <a
+            href="https://github.com/darthbirb/Sketcher"
+            className="underline text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             GitHub
           </a>
         </p>
-        <p>Powered by TensorFlow and React</p>
+        <p>
+          Based on the{" "}
+          <a
+            href="https://github.com/googlecreativelab/quickdraw-dataset"
+            className="underline text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Google Quick, Draw! Dataset
+          </a>
+        </p>
       </div>
     </div>
   );
