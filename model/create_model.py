@@ -9,8 +9,8 @@ import os
 # Paths
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "quickdraw_cnn.h5")
-CLASS_NAMES_PATH = os.path.join(DATA_DIR, "class_names.npy")
+MODEL_PATH = os.path.join(BASE_DIR, "web-app", "backend", "quickdraw_cnn.h5")
+NEW_CLASS_NAMES_PATH = os.path.join(BASE_DIR, "web-app", "backend", "class_names.npy")
 
 # Loading preprocessed data
 X_train = np.load(os.path.join(DATA_DIR, "X_train.npy"))
@@ -18,6 +18,7 @@ y_train = np.load(os.path.join(DATA_DIR, "y_train.npy"))
 X_test = np.load(os.path.join(DATA_DIR, "X_test.npy"))
 y_test = np.load(os.path.join(DATA_DIR, "y_test.npy"))
 class_names = np.load(os.path.join(DATA_DIR, "class_names.npy"))
+
 NUM_CLASSES = len(class_names)
 
 # Converting labels to categorical
@@ -81,7 +82,6 @@ history = model.fit(
     callbacks=[lr_scheduler, early_stopping, model_checkpoint] 
 )
 
-# Unnecessary, but just to doublecheck
-np.save(CLASS_NAMES_PATH, class_names)
+np.save(NEW_CLASS_NAMES_PATH, class_names)
 
 print(f"\n Model trained and saved to '{MODEL_PATH}' with {NUM_CLASSES} classes.")

@@ -11,13 +11,9 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-MODEL_DIR = os.path.join(BASE_DIR, "model")
-DATASET_DIR = os.path.join(BASE_DIR, "dataset", "quickdraw_dataset")
-
-# Loading the model
-model = load_model(os.path.join(MODEL_DIR, "quickdraw_cnn.h5"))
-class_names = np.load(os.path.join(DATASET_DIR, "class_names.npy"))
+# Loading the model and classes
+model = load_model("quickdraw_cnn.h5")
+class_names = np.load("class_names.npy")
 
 def crop_and_center(image, target_size=(26, 26)):
     
