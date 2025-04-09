@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 // @ts-ignore
+import SocialSidebar from "./components/ui/SocialSidebar";
+// @ts-ignore
 import SketchCanvas from "./components/SketchCanvas";
 
 type SketchCanvasHandle = {
@@ -32,10 +34,17 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#212121] text-white font-sans flex flex-col items-center px-4 py-8">
-      <h1 className="text-5xl font-bold text-center mb-2">Sketcher</h1>
+    <div className="min-h-screen bg-[#0f0f0f] text-white font-sans flex flex-col items-center px-4 py-8">
+      <SocialSidebar />
+
+      <img
+        src="/sketcher.png"
+        alt="Sketcher"
+        className="h-18 mb-2 invert"
+      />
+
       <p className="text-center text-lg text-gray-400 mb-8">
-        Not the shoe! – Draw something for the model to recognize
+        Not the shoe! – Sketch something for the model to identify
       </p>
 
       <div className="relative">
