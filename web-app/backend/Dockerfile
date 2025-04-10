@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN pip install --upgrade pip
-RUN pip install --default-timeout=1000 -r requirements.txt
+RUN pip install --progress-bar=on --timeout=1000 --retries=5 -r requirements.txt
 
 EXPOSE 5000
 
