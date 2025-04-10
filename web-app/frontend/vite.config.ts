@@ -16,7 +16,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/predict': process.env.VITE_API_URL || 'http://localhost:5000',
+      '/predict': {
+        target: process.env.VITE_API_URL || 'http://localhost:5000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/predict/, '/predict'),
+      },
     },
   },
 });

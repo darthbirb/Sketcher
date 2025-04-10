@@ -24,7 +24,9 @@ function App() {
   const handleSubmit = async () => {
     const base64 = await canvasRef.current?.exportImage();
     if (!base64) return;
-    const response = await fetch("/predict", {
+
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const response = await fetch(`${apiUrl}/predict`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: base64.split(",")[1] }),

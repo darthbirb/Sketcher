@@ -9,7 +9,9 @@ from PIL import Image, ImageOps
 import os
 
 app = Flask(__name__)
-CORS(app)
+
+# Restricting CORS
+CORS(app, resources={r"/*": {"origins": "https://darthbirb-sketcher.web.app"}})
 
 # Loading the model and classes
 model = load_model("quickdraw_cnn.h5")
