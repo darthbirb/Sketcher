@@ -16,7 +16,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/predict': process.env.VITE_API_URL || 'http://127.0.0.1:5000',
+      '/predict': process.env.VITE_API_URL || 'http://localhost:5000',
     },
   },
 });
