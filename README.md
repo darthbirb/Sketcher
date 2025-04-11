@@ -70,12 +70,12 @@ You just need node installed for this.
 
 ---
 
-## 📄 License
+## License
 
 Licensed under the [MIT License](LICENSE)
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Google Creative Lab for the [Quick, Draw! dataset](https://quickdraw.withgoogle.com/)
