@@ -23,7 +23,7 @@ Try it out on [https://darthbirb-sketcher.web.app](https://darthbirb-sketcher.we
 
 Here are some samples from the Google Quick, Draw! dataset:
 
-![QuickDraw Samples](dataset/quickdraw_dataset/quickdraw_samples.png)
+![QuickDraw Samples](dataset/quickdraw_samples.png)
 
 Here are all the categories present in the dataset:
 
