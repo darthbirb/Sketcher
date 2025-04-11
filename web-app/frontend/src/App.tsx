@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 // @ts-ignore
 import SocialSidebar from "./components/SocialSidebar";
 // @ts-ignore
@@ -14,6 +15,7 @@ function App() {
   const canvasRef = useRef<SketchCanvasHandle | null>(null);
   const [predictions, setPredictions] = useState<[string, number][]>([]);
   const [hasDrawn, setHasDrawn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
@@ -22,8 +24,12 @@ function App() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const base64 = await canvasRef.current?.exportImage();
-    if (!base64) return;
+    if (!base64) {
+      setLoading(false);
+      return;
+    }
 
     const apiUrl = import.meta.env.VITE_API_URL;
     const response = await fetch(`${apiUrl}/predict`, {
@@ -33,6 +39,7 @@ function App() {
     });
     const result = await response.json();
     setPredictions([...result.predictions]);
+    setLoading(false);
   };
 
   return (
@@ -73,16 +80,23 @@ function App() {
           variant={"destructive"}
           onClick={handleClear}
           disabled={!hasDrawn}
-          className="w-32"
+          className="w-32 bg-red-600 hover:bg-[#9a0007]"
         >
           Clear
         </Button>
         <Button
           onClick={handleSubmit}
-          disabled={!hasDrawn}
-          className="w-32"
+          disabled={!hasDrawn || loading}
+          className="w-32 flex items-center justify-center bg-[#27272a] hover:bg-[#212124]"
         >
-          Predict
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin mr-2" />
+              Please wait
+            </>
+          ) : (
+            "Predict"
+          )}
         </Button>
       </div>
 
