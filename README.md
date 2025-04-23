@@ -14,7 +14,7 @@ Try it out on [https://darthbirb-sketcher.web.app](https://darthbirb-sketcher.we
 
 1. You draw something on the canvas.
 2. The frontend sends your sketch (as a base64 image) to the Flask backend.
-3. The backend preprocesses the image and feeds it to a trained CNN model.
+3. The backend processes the image and feeds it to a trained CNN model.
 4. The model predicts the top 3 most likely labels, which are shown on-screen with their confidence percentages.
 
 ---
