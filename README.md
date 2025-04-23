@@ -54,19 +54,21 @@ If you'd like to run the code locally, please clone the repository and run the f
 
 ### Backend (Flask with Docker - in Sketcher/web-app/backend)
 
+Make sure you have Docker installed.
+
 ```bash
 docker build -t sketcher-backend .
 docker run -p 5000:5000 sketcher-backend
 ```
-Make sure you have Flask and Docker installed.
 
 ### Frontend (React + Vite - in Sketcher/web-app/frontend)
+
+You just need Node installed for this.
 
 ```bash
 npm install
 npm run dev
 ```
-You just need node installed for this.
 
 ---
 
