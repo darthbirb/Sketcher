@@ -83,5 +83,9 @@ def predict():
 
     return jsonify({"predictions": top_3_labels})
 
+@app.route('/ping', methods=['GET'])
+def ping():
+    return 'pong', 200
+
 if __name__ == '__main__':
     app.run(debug=True)

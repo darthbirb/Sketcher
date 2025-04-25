@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 // @ts-ignore
@@ -16,6 +16,10 @@ function App() {
   const [predictions, setPredictions] = useState<[string, number][]>([]);
   const [hasDrawn, setHasDrawn] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/ping`).catch(() => {});
+  }, []);
 
   const handleClear = () => {
     canvasRef.current?.clearCanvas();
