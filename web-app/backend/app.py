@@ -11,9 +11,7 @@ import os
 app = Flask(__name__)
 
 # Restricting CORS
-allowed_origins = ["https://darthbirb-sketcher.web.app", "http://localhost:5173"]
-
-CORS(app, resources={r"/*": {"origins": allowed_origins}})
+CORS(app, resources={r"/*": {"origins": ["https://darthbirb-sketcher.web.app", "http://localhost:5173"]}})
 
 # Loading the model and classes
 model = load_model("quickdraw_cnn.h5")
