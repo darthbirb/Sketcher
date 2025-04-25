@@ -3,24 +3,28 @@ import path from "path"
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+const isProduction = process.env.NODE_ENV === 'production';
+const API_URL = isProduction
+  ? 'https://sketcher-backend-294103069034.europe-west1.run.app'
+  : 'http://localhost:5000';
+
+  export default defineConfig({
+    define: {
+      'import.meta.env.VITE_API_URL': JSON.stringify(API_URL),
     },
-  },
-  server: {
-    proxy: {
-      '/predict': {
-        target: process.env.VITE_API_URL || 'http://localhost:5000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/predict/, '/predict'),
+    plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
       },
     },
-  },
-});
+    server: {
+      proxy: {
+        '/predict': {
+          target: API_URL,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/predict/, '/predict'),
+        },
+      },
+    },
+  });
