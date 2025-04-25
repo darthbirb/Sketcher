@@ -11,9 +11,7 @@ import os
 app = Flask(__name__)
 
 # Restricting CORS
-allowed_origins = ["https://darthbirb-sketcher.web.app"]
-if os.environ.get("FLASK_ENV") == "development":
-    allowed_origins.append("http://localhost:5173")
+allowed_origins = ["https://darthbirb-sketcher.web.app", "http://localhost:5173"]
 
 CORS(app, resources={r"/*": {"origins": allowed_origins}})
 
