@@ -119,29 +119,39 @@ function App() {
         </div>
       )}
 
-      <div className="mt-6 text-center text-sm text-gray-400">
-        <p className="mb-1">
-          Not to be confused with the shoes! Check out the code on{" "}
-          <a
-            href="https://github.com/darthbirb/Sketcher"
-            className="underline text-white"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GitHub
-          </a>
-        </p>
-        <p>
-          Based on the{" "}
-          <a
-            href="https://github.com/googlecreativelab/quickdraw-dataset"
-            className="underline text-white"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Google Quick, Draw! Dataset
-          </a>
-        </p>
+      <div
+        className={`mt-6 text-center text-sm transition-opacity duration-500 ${
+          loading && predictions.length === 0 ? "opacity-100" : "opacity-100"
+        }`}
+      >
+        {loading && predictions.length === 0 ? (
+          <p className="text-gray-400">First sketch? Please allow 15 seconds for the model to start up</p>
+        ) : (
+          <>
+            <p className="mb-1 text-gray-400">
+              Not to be confused with the shoes! Check out the code on{" "}
+              <a
+                href="https://github.com/darthbirb/Sketcher"
+                className="underline text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub
+              </a>
+            </p>
+            <p className="text-gray-400">
+              Based on the{" "}
+              <a
+                href="https://github.com/googlecreativelab/quickdraw-dataset"
+                className="underline text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Google Quick, Draw! Dataset
+              </a>
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
