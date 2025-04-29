@@ -16,6 +16,7 @@ function App() {
   const [predictions, setPredictions] = useState<[string, number][]>([]);
   const [hasDrawn, setHasDrawn] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasPredictedOnce, setHasPredictedOnce] = useState(false);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/ping`).catch(() => {});
@@ -34,7 +35,7 @@ function App() {
       setLoading(false);
       return;
     }
-
+  
     const apiUrl = import.meta.env.VITE_API_URL;
     const response = await fetch(`${apiUrl}/predict`, {
       method: "POST",
@@ -43,8 +44,9 @@ function App() {
     });
     const result = await response.json();
     setPredictions([...result.predictions]);
+    setHasPredictedOnce(true);
     setLoading(false);
-  };
+  };  
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white font-sans flex flex-col items-center px-4 py-8">
@@ -118,14 +120,15 @@ function App() {
           </div>
         </div>
       )}
-
       <div
         className={`mt-6 text-center text-sm transition-opacity duration-500 ${
-          loading && predictions.length === 0 ? "opacity-100" : "opacity-100"
+          loading && !hasPredictedOnce ? "opacity-100" : "opacity-100"
         }`}
       >
-        {loading && predictions.length === 0 ? (
-          <p className="text-gray-400">First sketch? Please allow 15 seconds for the model to start up</p>
+        {loading && !hasPredictedOnce ? (
+          <p className="text-gray-400">
+            First sketch? Please allow 15 seconds for the model to start up.
+          </p>
         ) : (
           <>
             <p className="mb-1 text-gray-400">
